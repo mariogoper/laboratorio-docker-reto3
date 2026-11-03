@@ -1,7 +1,8 @@
 import json
 import mysql.connector
+from prettytable import PrettyTable
 
-# Cargar credenciales desde el archivo JSON
+# Cargar configuración desde el archivo JSON
 with open("config/config.json", "r") as archivo:
     db_config = json.load(archivo)
 
@@ -16,9 +17,16 @@ try:
 
     cursor = conexion.cursor()
     cursor.execute("SELECT * FROM coches")
+    filas = cursor.fetchall()
 
-    for coche in cursor.fetchall():
-        print(coche)
+    # Configuración de la tabla PrettyTable
+    tabla = PrettyTable()
+    tabla.field_names = [i[0] for i in cursor.description]
+
+    for fila in filas:
+        tabla.add_row(fila)
+
+    print(tabla)
 
     cursor.close()
     conexion.close()
